@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Account.</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="Style/Login Form.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <!--Stylesheet-->
+    <style>body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    
+    #map { 
+        width: calc(100%); /* Adjust map width based on sidebar width */
+        height: 100%;
+        float: right; /* Align map to the right */
+    }
+    
+    
+    
+    /* Login Form */
+    #loginFrame {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px 40px 22px 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+    
+    #loginForm {
+        text-align: center;
+    }
+    
+    #loginForm input[type="text"],
+    #loginForm input[type="password"],
+    #loginForm input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    #loginForm input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin: -2px 10px -1px 12px;
+    
+    } 
+    
+    /* Login Form */</style>
+    <style media="screen">
+      *,
+*:before,
+*:after{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: #080710;
+}
+.background{
+    width: 430px;
+    height: 520px;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    left: 50%;
+    top: 50%;
+}
+.background .shape{
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    border-radius: 50%;
+}
+.shape:first-child{
+    background: linear-gradient(
+        #1845ad,
+        #23a2f6
+    );
+    left: -80px;
+    top: -80px;
+}
+.shape:last-child{
+    background: linear-gradient(
+        to right,
+        #ff512f,
+        #f09819
+    );
+    right: -30px;
+    bottom: -80px;
+}
+form{
+    height: 688px;
+    width: 400px;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 40px rgba(8,7,16,0.6);
+    padding: 50px 35px;
+}
+form *{
+    font-family: 'Poppins',sans-serif;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    outline: none;
+    border: none;
+    text-decoration: none;
+}
+form h3{
+    font-size: 26px;
+  font-weight: 500;
+  line-height: 42px;
+  text-align: center;
+}
+
+label{
+    display: block;
+    margin-top: 15px;
+    font-size: 16px;
+    font-weight: 500;
+}
+input{
+    display: block;
+    height: 50px;
+    width: 100%;
+    background-color: rgba(255,255,255,0.07);
+    border-radius: 3px;
+    padding: 0 10px;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 300;
+}
+::placeholder{
+    color: #e5e5e5;
+}
+button{
+    margin-top: 25px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.75);
+  color: #080710;
+  padding: 15px 0px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.social{
+  margin-top: 30px;
+  display: flex;
+}
+.social div{
+  background: red;
+  background-color: red;
+  width: 164px;
+  border-radius: 3px;
+  padding: 5px 10px 10px 5px;
+  background-color: rgba(255,255,255,0.27);
+  color: #eaf0fb;
+  text-align: center;
+  height: 53px;
+  margin: -14px 5px 10px 5px;
+  padding: 3px 10px 10px 10px;
+  font-size: 15px;
+}
+.social div:hover{
+  background-color: rgba(255,255,255,0.47);
+}
+.social .fb{
+  margin-left: 25px;
+}
+.social i{
+  margin-right: 4px;
+}
+
+    </style>
+</head>
+<body>
+    <div id="loginFrame">
+
+         <div class="background">
+
+    </div>
+  
+    <form method="POST">
+        <h3>Create New Account.</h3>
+        {% csrf_token %}
+        <label for="FullName">Full Name:</label>
+        <input required name="full_name" type="text" placeholder="Enter Your Full Name." id="FullName">
+
+        <label for="username">Email :</label>
+        <input required name="email" type="text" placeholder="Enter Your Username." id="username">
+
+        <label for="Age">Country:</label>
+        <input required name="country" type="text" placeholder="Enter Your Country." id="Country">
+        
+        <label for="password">Password:</label>
+        <input required name="password" type="password" placeholder="Enter Your Password." id="password">
+
+
+        <button type="submit">Create Account.</button>
+        <div class="social">
+          <div class="Login"><a href="{% url 'login' %}" target="_self">Login To Your Account.</a></div>
+          <div class="Guest"><a href="{% url 'Operation' %}" target="_self">Browse As a Guest.</a></div>
+        </div>
+    </form>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Sidebar menu for map layers -->
+
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- <script src="Javascript/login Js.js"></script> -->
+    <script> // Initialize the map
+        var map = L.map('map').setView([26.8206, 30.8025], 6); // Coordinates for Egypt: [Latitude, Longitude], Zoom Level
+        
+        // Define the layers
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        });
+        
+        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+        
+        var GeoportailFrance_orthos = L.tileLayer('https://wxs.ign.fr/{apikey}/geoportail/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&STYLE={style}&TILEMATRIXSET=PM&FORMAT={format}&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+            attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">Geoportail France</a>',
+            bounds: [[-75, -180], [81, 180]],
+            minZoom: 2,
+            maxZoom: 19,
+            apikey: 'choisirgeoportail',
+            format: 'image/jpeg',
+            style: 'normal'
+        });
+        
+        var USGS_USImageryTopo = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 20,
+            attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
+        });
+        
+        var CyclOSM = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+        
+        var GeoportailFrance_orthos = L.tileLayer('https://wxs.ign.fr/{apikey}/geoportail/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&STYLE={style}&TILEMATRIXSET=PM&FORMAT={format}&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+            attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">Geoportail France</a>',
+            bounds: [[-75, -180], [81, 180]],
+            minZoom: 2,
+            maxZoom: 19,
+            apikey: 'choisirgeoportail',
+            format: 'image/jpeg',
+            style: 'normal'
+        });
+        
+        // Define the layer options
+        var layers = {
+            "OpenStreetMap": osmLayer,
+            "Esri_WorldImagery": Esri_WorldImagery,
+            "GeoportailFrance_orthos": GeoportailFrance_orthos,
+            "USGS_USImageryTopo": USGS_USImageryTopo,
+            "CyclOSM": CyclOSM,
+            "GeoportailFrance_orthos": GeoportailFrance_orthos,
+            // Add other layers here
+        };
+        
+        // Set the default layer
+        osmLayer.addTo(map);
+        
+        // Get the login form by its ID
+        // Get the login form by its ID
+        /*var loginForm = document.querySelector('#loginForm');
+        
+        // Function to handle form submission
+        function handleFormSubmit(event) {
+            event.preventDefault(); // Prevent the default form submission
+        
+            // Get the entered username and password values
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+        
+            // Check the entered credentials
+            if (username === 'admin' && password === 'admin') {
+                // If credentials are correct, redirect to index.html
+                window.location.href = 'index.html';
+            } else {
+                // If credentials are incorrect, display an error message or take another action
+                alert('Invalid credentials. Please try again.');
+            }
+        }
+        
+        // Add an event listener to the form submission
+        loginForm.addEventListener('submit', handleFormSubmit);*/
+        </script>
+</body>
+</html>

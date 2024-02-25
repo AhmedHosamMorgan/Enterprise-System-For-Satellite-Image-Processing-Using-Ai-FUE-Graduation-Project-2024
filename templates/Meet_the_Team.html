@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meet The Team</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <!-- Your CSS styles -->
+    <!-- ... -->
+    <style>
+
+      
+.up {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    z-index: 2;
+}
+
+.up h1{
+    font-family: sans-serif;
+    font-weight: bold;
+    color: #21C5DF;
+    text-shadow: 0px 0px 30px #21C5DF50;
+}
+
+
+.down {
+    width: calc(100% - 705px);
+  min-height: 1vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  position: absolute;
+  left: 54%;
+  transform: translate(-50%, -50%); /* Center the element */
+  z-index: 9999;
+  padding: 1rem 0;
+  top: 28%;
+  height: 38%;
+}
+
+
+.down .col {
+    /* border: 1px solid red; */
+  position: relative;
+  width: 290px;
+  min-height: 97px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.down .col .title:not(#exception) {
+    width: 91%;
+    height: 54px;
+    border-radius: 20px;    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 3px 20px #B5B2B216;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: white;
+    font-family: 'Poppins',sans-serif;
+}
+
+#exception  
+{
+    width: 90%;
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 3px 20px #B5B2B216;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  font-family: 'Poppins',sans-serif;
+}
+
+.down .col .upload-img {
+    width: 90%;
+  height: 54px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1BCFD509;
+  border: 3px dotted black;
+  color: black;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: 'Poppins',sans-serif;
+}
+
+
+.down .col .image {
+    width: 83%;
+  height: 64px;
+    border-radius: 30px;
+    background-color: rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 6px 12px;
+}
+
+.down .col .image img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.down .col .image p {
+    color: white;
+  font-weight: bold;
+  font-family: 'Poppins',sans-serif;
+  font-size: 13px;
+  width: 200px;
+  height: 50px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+
+
+.down .col .title.method,.down .col .title.function {
+    background-color: #E1DBDB;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.down .col .title.method.active,.down .col .title.function.active{
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+}
+
+
+
+.col::after {
+    content: "";
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background-color: #00000090;
+    backdrop-filter: blur(10px);
+    border-radius: 18px;
+    display: none;
+}
+
+.col.dis::after {
+    display: none;
+}
+
+
+
+.col .runBtn {
+    width: 90%;
+  height: 54px;
+  border: none;
+  outline: none;
+  color: #fff;
+  border-radius: 18px;
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 30px black;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Poppins',sans-serif;
+}
+
+.col .runBtn.load {
+    box-shadow: none;
+    background-color:rgba(23, 149, 170, 0.75)
+}
+
+
+/* Main Operations  */
+
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+}
+
+#map { 
+    width: calc(100%); /* Adjust map width based on sidebar width */
+    height: 100%;
+    float: right; /* Align map to the right */
+}
+
+.custom-heading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 19px;
+    font-size: 17px;
+    color: black;
+    font-weight: bold;
+    font-family: 'Poppins',sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  }
+
+#sidebar {
+    width: 255px;
+    height: 100%;
+    overflow-y: auto;
+    z-index: 999;
+
+  background-color: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 40px rgba(8,7,16,0.6);
+  padding: 0px 0px;
+}
+
+#toggleSidebar {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#menuContent {
+  font-size: 14px;
+  margin: 0px 0px 0px 0px;
+  padding: 30px 14px 0px 19px;
+  font-family: 'Poppins',sans-serif;
+}
+
+#layerMenu {
+    list-style: none;
+    padding: 0;
+}
+
+#layerMenu li {
+    cursor: pointer;
+    padding: 19px 0;
+    border-bottom: 1px dashed black;
+    font-family: 'Poppins',sans-serif;
+    font-size: 15px;
+}
+
+#layerMenu li:hover {
+    background: rgba(255,255,255,0.1);
+}
+    
+    /* Your existing CSS styles */
+        #navbar {
+            width: 100%; /* Adjust width accounting for sidebar */
+            padding: 10px 20px; /* Adjust padding for space around buttons */
+            background: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            right: 0; /* Position the navbar to the right */
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(8, 7, 16, 0.6);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: flex-end; /* Align buttons to the right */
+            align-items: center;
+            height: 65px;
+                    
+        }
+        
+        #navbar button {
+        
+        
+            padding: 10px 15px;
+            width: 140px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            margin: 9px 9px 9px 10px;
+            font-size: 12px;
+        
+        }
+        /* ... Your existing CSS ... */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        #map {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Send the map to the back */
+        }
+
+        .content {
+            /* Add margin to ensure content isn't placed exactly on the edges of the screen */
+            margin: 50px;
+            /* Your existing content styles */
+            /* ... */
+        }
+
+
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800&amp;display=swap');
+
+*,
+*:before,
+*:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.wk-desk-1 {
+  width: 8.333333%;
+}
+
+.wk-desk-2 {
+  width: 16.666667%;
+}
+
+.wk-desk-3 {
+  width: 25%;
+}
+
+.wk-desk-4 {
+  width: 33.333333%;
+}
+
+.wk-desk-5 {
+  width: 41.666667%;
+}
+
+.wk-desk-6 {
+  width: 50%;
+}
+
+.wk-desk-7 {
+  width: 58.333333%;
+}
+
+.wk-desk-8 {
+  width: 66.666667%;
+}
+
+.wk-desk-9 {
+  width: 75%;
+}
+
+.wk-desk-10 {
+  width: 83.333333%;
+}
+
+.wk-desk-11 {
+  width: 91.666667%;
+}
+
+.wk-desk-12 {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .wk-ipadp-1 {
+    width: 8.333333%;
+  }
+
+  .wk-ipadp-2 {
+    width: 16.666667%;
+  }
+
+  .wk-ipadp-3 {
+    width: 25%;
+  }
+
+  .wk-ipadp-4 {
+    width: 33.333333%;
+  }
+
+  .wk-ipadp-5 {
+    width: 41.666667%;
+  }
+
+  .wk-ipadp-6 {
+    width: 50%;
+  }
+
+  .wk-ipadp-7 {
+    width: 58.333333%;
+  }
+
+  .wk-ipadp-8 {
+    width: 66.666667%;
+  }
+
+  .wk-ipadp-9 {
+    width: 75%;
+  }
+
+  .wk-ipadp-10 {
+    width: 83.333333%;
+  }
+
+  .wk-ipadp-11 {
+    width: 91.666667%;
+  }
+
+  .wk-ipadp-12 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .wk-tab-1 {
+    width: 8.333333%;
+  }
+
+  .wk-tab-2 {
+    width: 16.666667%;
+  }
+
+  .wk-tab-3 {
+    width: 25%;
+  }
+
+  .wk-tab-4 {
+    width: 33.333333%;
+  }
+
+  .wk-tab-5 {
+    width: 41.666667%;
+  }
+
+  .wk-tab-6 {
+    width: 50%;
+  }
+
+  .wk-tab-7 {
+    width: 58.333333%;
+  }
+
+  .wk-tab-8 {
+    width: 66.666667%;
+  }
+
+  .wk-tab-9 {
+    width: 75%;
+  }
+
+  .wk-tab-10 {
+    width: 83.333333%;
+  }
+
+  .wk-tab-11 {
+    width: 91.666667%;
+  }
+
+  .wk-tab-12 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .wk-mobile-1 {
+    width: 8.333333%;
+  }
+
+  .wk-mobile-2 {
+    width: 16.666667%;
+  }
+
+  .wk-mobile-3 {
+    width: 25%;
+  }
+
+  .wk-mobile-4 {
+    width: 33.333333%;
+  }
+
+  .wk-mobile-5 {
+    width: 41.666667%;
+  }
+
+  .wk-mobile-6 {
+    width: 50%;
+  }
+
+  .wk-mobile-7 {
+    width: 58.333333%;
+  }
+
+  .wk-mobile-8 {
+    width: 66.666667%;
+  }
+
+  .wk-mobile-9 {
+    width: 75%;
+  }
+
+  .wk-mobile-10 {
+    width: 83.333333%;
+  }
+
+  .wk-mobile-11 {
+    width: 91.666667%;
+  }
+
+  .wk-mobile-12 {
+    width: 100%;
+  }
+}
+      </style>
+      <style>
+    * {
+  font-family: Nunito, sans-serif;
+}
+
+.text-blk {
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  line-height: 25px;
+}
+
+.responsive-cell-block {
+  min-height: 75px;
+  
+}
+
+.responsive-container-block {
+  min-height: 75px;
+  height: fit-content;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: -23px;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-left: auto;
+  justify-content: space-evenly;
+  
+}
+
+.outer-container {
+  padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 50px;
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 75%;
+    height: 630px;
+
+    /* Centering */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.leaflet-control-zoom {
+    display: none;
+}
+
+/* Hide attribution */
+.leaflet-control-attribution {
+    display: none;
+}
+
+.inner-container {
+  max-width: 1320px;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  margin-right: auto;
+  margin-bottom: 50px;
+  margin-left: auto;
+}
+
+.section-head-text {
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 5px;
+  margin-left: 0px;
+  font-size: 35px;
+  font-weight: 700;
+  line-height: 48px;
+  color: black;
+  margin: 0 0 10px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.section-subhead-text {
+  font-size: 25px;
+  color: rgb(153, 153, 153);
+  line-height: 35px;
+  max-width: 470px;
+  text-align: center;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 60px;
+  margin-left: 0px;
+}
+
+.img-wrapper {
+  width: 100%;
+}
+
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.social-media-links {
+  width: 125px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.name {
+  font-size: 23px;
+  font-weight: 700;
+  color: black;
+  margin-top: 15px;
+  margin-right: 0px;
+  margin-bottom: 5px;
+  margin-left: 0px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.position {
+  font-size: 19px;
+    font-weight: 700;
+    color: black;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 50px;
+    margin-left: 0px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.team-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 15%;
+}
+
+.team-card-container {
+  width: 280px;
+  margin: 0 0 40px 0;
+}
+
+
+@media (max-width: 500px) {
+  .outer-container {
+    padding: 10px 20px 10px 20px;
+  }
+
+  .section-head-text {
+    text-align: center;
+    color:red;
+    font-family: 'Poppins', sans-serif;
+  }
+}
+    </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div id="navbar">
+    <h5 class="custom-heading">Enterprise System for Satellite Image Processing Using Artificial Intelligence.</h5>
+    <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'Operation' %}'">Main Page</button>
+    <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'Documentation' %}'">Documentation</button>
+    <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'Contact_US' %}'">Contact Us</button>
+    <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'login' %}'">Change Account</button>
+    <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+   
+    <!-- Add other navbar elements here -->
+</div>
+
+    <div class="content">
+      <div class="responsive-container-block outer-container">
+        <div class="responsive-container-block inner-container">
+          <p class="text-blk section-head-text">
+            Meet Our Team.
+          </p>
+          <p class="text-blk section-subhead-text">
+           
+            
+          </p>
+          <div class="responsive-container-block">
+            <div class="responsive-cell-block wk-desk-3 wk-ipadp-3 wk-tab-6 wk-mobile-12 team-card-container">
+              <div class="team-card">
+                <div class="img-wrapper">
+                  <img class="team-img" src="..\media\Avatar.webp">
+                </div>
+                <p class="text-blk name">
+                  Ahmed Hossam ElDeen  
+                </p>
+                <p class="text-blk position">
+                  20194462@fue.edu.eg
+                </p>
+               
+              </div>
+            </div>
+            <div class="responsive-cell-block wk-desk-3 wk-ipadp-3 wk-tab-6 wk-mobile-12 team-card-container">
+              <div class="team-card">
+                <div class="img-wrapper">
+                  <img class="team-img" src="..\media\Avatar.webp">
+                </div>
+                <p class="text-blk name">
+                  Abdelrahman Kamel  
+                </p>
+                <p class="text-blk position">
+                  20193056@fue.edu.eg
+                </p>
+             
+              </div>
+            </div>
+            <div class="responsive-cell-block wk-desk-3 wk-ipadp-3 wk-tab-6 wk-mobile-12 team-card-container">
+              <div class="team-card">
+                <div class="img-wrapper">
+                  <img class="team-img" src="..\media\Avatar.webp">
+                </div>
+                <p class="text-blk name">
+                  Mohamed Yosr 
+                </p>
+                <p class="text-blk position">
+                  20191521@fue.edu.eg
+                </p>
+              
+              </div>
+            </div>
+            
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize and set up the map with Leaflet
+        var map = L.map('map').setView([26.8206, 30.8025], 6);
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        });
+        osmLayer.addTo(map);
+
+        // Add other map configuration and layers here
+    </script>
+</body>
+</html>

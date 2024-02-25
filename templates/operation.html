@@ -1,0 +1,581 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Satellite Image Enhancment.</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <style> 
+
+
+.up {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    z-index: 2;
+}
+
+.up h1{
+    font-family: sans-serif;
+    font-weight: bold;
+    color: #21C5DF;
+    text-shadow: 0px 0px 30px #21C5DF50;
+}
+
+
+.down {
+    width: calc(100% - 705px);
+  min-height: 1vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  position: absolute;
+  left: 54%;
+  transform: translate(-50%, -50%); /* Center the element */
+  z-index: 9999;
+  padding: 1rem 0;
+  top: 28%;
+  height: 38%;
+}
+
+
+.down .col {
+    /* border: 1px solid red; */
+  position: relative;
+  width: 290px;
+  min-height: 97px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.down .col .title:not(#exception) {
+    width: 91%;
+    height: 54px;
+    border-radius: 20px;    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 3px 20px #B5B2B216;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: white;
+    font-family: 'Poppins',sans-serif;
+}
+
+#exception  
+{
+    width: 90%;
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 3px 20px #B5B2B216;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  font-family: 'Poppins',sans-serif;
+}
+
+.down .col .upload-img {
+    width: 90%;
+  height: 54px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1BCFD509;
+  border: 3px dotted black;
+  color: black;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: 'Poppins',sans-serif;
+}
+
+
+.down .col .image {
+    width: 83%;
+  height: 64px;
+    border-radius: 30px;
+    background-color: rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 6px 12px;
+}
+
+.down .col .image img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.down .col .image p {
+    color: white;
+  font-weight: bold;
+  font-family: 'Poppins',sans-serif;
+  font-size: 13px;
+  width: 200px;
+  height: 50px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+
+
+.down .col .title.method,.down .col .title.function {
+    background-color: #E1DBDB;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.down .col .title.method.active,.down .col .title.function.active{
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+}
+
+
+
+.col::after {
+    content: "";
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background-color: #00000090;
+    backdrop-filter: blur(10px);
+    border-radius: 18px;
+    display: none;
+}
+
+.col.dis::after {
+    display: none;
+}
+
+
+
+.col .runBtn {
+    width: 90%;
+  height: 54px;
+  border: none;
+  outline: none;
+  color: #fff;
+  border-radius: 18px;
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 30px black;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Poppins',sans-serif;
+}
+
+.col .runBtn.load {
+    box-shadow: none;
+    background-color:rgba(23, 149, 170, 0.75)
+}
+
+
+/* Main Operations  */
+
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#map { 
+    width: calc(100%); /* Adjust map width based on sidebar width */
+    height: 100%;
+    float: right; /* Align map to the right */
+}
+
+.custom-heading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 19px;
+    font-size: 17px;
+    color: black;
+    font-weight: bold;
+    font-family: 'Poppins',sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  }
+
+#sidebar {
+    width: 255px;
+    height: 100%;
+    overflow-y: auto;
+    z-index: 999;
+
+  background-color: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 40px rgba(8,7,16,0.6);
+  padding: 0px 0px;
+}
+
+#toggleSidebar {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#menuContent {
+  font-size: 14px;
+  margin: 0px 0px 0px 0px;
+  padding: 30px 14px 0px 19px;
+  font-family: 'Poppins',sans-serif;
+}
+
+#layerMenu {
+    list-style: none;
+    padding: 0;
+}
+
+#layerMenu li {
+    cursor: pointer;
+    padding: 19px 0;
+    border-bottom: 1px dashed black;
+    font-family: 'Poppins',sans-serif;
+    font-size: 15px;
+}
+
+#layerMenu li:hover {
+    background: rgba(255,255,255,0.1);
+}
+    
+    /* Your existing CSS styles */
+        #navbar {
+            width: calc(100% - 298px); /* Adjust width accounting for sidebar */
+            padding: 10px 20px; /* Adjust padding for space around buttons */
+            background: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 0;
+            right: 0; /* Position the navbar to the right */
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(8, 7, 16, 0.6);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: flex-end; /* Align buttons to the right */
+            align-items: center;
+            height: 38px;
+                    
+        }
+        
+        #navbar button {
+        
+        
+            padding: 10px 15px;
+            width: 140px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            margin: 9px 9px 9px 10px;
+            font-size: 12px;
+        
+        }
+        </style>
+
+<style>
+    .leaflet-control-attribution {
+        display: none;
+    }
+</style>
+
+</head>
+<body>
+    
+    <div id="navbar">
+        <h5 class="custom-heading">Enterprise System for Satellite Image Processing Using Artificial Intelligence.</h5>
+        <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'Documentation' %}'">Documentation</button>
+        <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'Meet_the_Team' %}'">Meet The Team</button>
+        <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'Contact_US' %}'">Contact Us</button>
+        <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'login' %}'">Change Account</button>
+        <button class="toggleSidebar" id="Home" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+       
+        <!-- Add other navbar elements here -->
+    </div>
+
+    <div id="sidebar">
+        <div id="menuContent">
+            <h2>Choose a Map Layer.</h2>
+            <ul id="layerMenu">
+                <li data-layer="OpenStreetMap">Open Street Map. <i class="fas fa-info-circle"></i></li>
+                <li data-layer="Esri_WorldImagery">Esri World Imagery. <i class="fas fa-info-circle"></i></li>
+                <li data-layer="GeoportailFrance_orthos">Geo Portail. <i class="fas fa-info-circle"></i></li>
+                <li data-layer="USGS_USImageryTopo">USGS Imagery. <i class="fas fa-info-circle"></i></li>
+                <li data-layer="CyclOSM">CyclOSM. <i class="fas fa-info-circle"></i></li>
+                <li data-layer="Esri_NatGeoWorldMap">Esri Nat Geo World Map. <i class="fas fa-info-circle"></i></li>
+                <!-- Add other layers here -->
+            </ul>
+            <div id="helpScreen" class="hidden">
+                <div data-layer="OpenStreetMap" style="display: none;">
+                    <p style="font-size: 12px;">OpenStreetMap is built by a community of mappers that contribute and maintain data about roads, trails, cafés, railway stations, and much more, all over the world. </p>
+                </div>
+                <div data-layer="Esri_WorldImagery" style="display: none;">
+                     <p style="font-size: 12px;">World Imagery provides one-meter or better satellite and aerial imagery in many parts of the world and lower-resolution satellite imagery worldwide. The map includes 15-meter TerraColor imagery at small and mid-scales (1:591,000,000 down to 1:72,000) for the world.</p>
+                </div>
+                <div data-layer="GeoportailFrance_orthos" style="display: none;">
+                    <p style="font-size: 12px;">Set up in 1940 to replace the service géographique de l'armée, to stop aircraft, maps and mapmaking equipment falling into enemy hands, the Institut national de l'information géographique et forestière (IGN) today is the main public body responsible for geographical information on French territory and one of Europe’s leading geographical institutes. It is currently a national benchmark in mapping and an important cartographic supplier for our collection of maps of France.</p>
+                </div>
+                <div data-layer="USGS_USImageryTopo" style="display: none;">
+                    <p style="font-size: 12px;">USGS Imagery Topo is a tile cache base map of orthoimagery in The National Map and US Topo vector data visible to the 1:9,028 scale. Orthoimagery data are typically high resolution images that combine the visual attributes of an aerial photograph with the spatial accuracy and reliability of a planimetric map.</p>
+                </div>
+                <div data-layer="CyclOSM" style="display: none;">
+                    <p style="font-size: 12px;">CyclOSM is an OpenStreetMap rendering layer like the standard tile layer, but primarily aimed at showing information useful to cyclists. It is built thinking bicycle-first from the beginning. The website www.cyclosm.org offers a demonstration of this map style, over the full planet and with minute updates thanks to the support of the French local chapter openstreetmap.fr. Tiles are rendered up to zoom level 20. </p>
+                </div>
+                <div data-layer="Esri_NatGeoWorldMap" style="display: none;">
+                    <p style="font-size: 12px;">The Esri National Geographic World Map is frequently used for its comprehensive portrayal of geographic information and is popular among various GIS users and enthusiasts for its visual appeal and rich cartographic detail.</p>
+                </div>
+                <!-- Add other layers' paragraphs here -->
+            </div>
+        </div>
+    </div>
+
+
+    <div class="down">
+
+        <input type="file" name="" id="imgFile" hidden>
+        <div class="col">
+
+            <div class="title" id="exception">
+                <p>1 - Choose Image</p>
+            </div>
+
+            <div class="upload-img" id="upload_img_btn">
+                <small>Click To Upload Image</small>
+            </div>
+
+
+        </div>
+
+        <div class="col">
+            
+            <div class="title" id="exception">
+                <p>2 - Choose Method</p>
+            </div>
+
+            <div class="title method" >
+                <p>Histogram Stretching</p>
+            </div>
+            
+            <div class="title method" >
+                <p>Image Filtration</p>
+            </div>
+
+            <div class="title method" >
+                <p>Image Transformation</p>
+            </div>
+
+            <div class="title method" >
+                <p>Super Resolution</p>
+            </div>
+            
+
+
+        </div>
+
+        <div class="col dis">
+            
+            <div class="title" id="exception">
+                <p>3 - Choose Function</p>
+            </div>
+
+            <div class="title function " >
+                <p>Histogram Equlization</p>
+            </div>
+            
+            <div class="title function" >
+                <p>Standard Deviation</p>
+            </div>
+            
+            <div class="title function" >
+                <p>Minimum and Maximum</p>
+            </div>
+
+
+        </div>
+
+
+        <div class="col">
+
+            <div class="title" id="exception">
+                <p>4 - Run Process</p>
+            </div>
+
+            <!-- class toogle load for loading -->
+            <button type="button" class="runBtn">Run</button>
+
+        </div>
+
+    </div>
+    <div id="map"></div>
+
+
+    </script>
+    <script src="{% static 'js/operaitons.js' %}"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        var helpButtons = document.querySelectorAll('#layerMenu li i');
+        var helpScreen = document.getElementById('helpScreen');
+    
+        helpButtons.forEach(function (button) {
+            button.addEventListener('click', function (e) {
+                var layerName = e.target.parentNode.dataset.layer;
+                var selectedParagraph = helpScreen.querySelector(`div[data-layer="${layerName}"]`);
+                if (selectedParagraph) {
+                    // Hide all paragraphs, then display the selected one
+                    helpScreen.querySelectorAll('div[data-layer]').forEach(p => p.style.display = 'none');
+                    selectedParagraph.style.display = 'block';
+                }
+                helpScreen.classList.remove('hidden');
+            });
+        });
+    </script>
+
+    <script>// Initialize the map
+        var map = L.map('map', {
+            zoomControl: false // Disable the default zoom control
+        }).setView([30.8206, 30.8025], 8);
+        
+        
+        // Define the layers
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        });
+        
+        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+        
+        var GeoportailFrance_orthos = L.tileLayer('https://wxs.ign.fr/{apikey}/geoportail/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&STYLE={style}&TILEMATRIXSET=PM&FORMAT={format}&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+            attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">Geoportail France</a>',
+            bounds: [[-75, -180], [81, 180]],
+            minZoom: 2,
+            maxZoom: 19,
+            apikey: 'choisirgeoportail',
+            format: 'image/jpeg',
+            style: 'normal'
+        });
+        
+        var USGS_USImageryTopo = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 20,
+            attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
+        });
+        
+        var CyclOSM = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+        
+        var Esri_NatGeoWorldMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+            maxZoom: 16
+        });
+        
+        // Define the layer options
+        var layers = {
+            "OpenStreetMap": osmLayer,
+            "Esri_WorldImagery": Esri_WorldImagery,
+            "GeoportailFrance_orthos": GeoportailFrance_orthos,
+            "USGS_USImageryTopo": USGS_USImageryTopo,
+            "CyclOSM": CyclOSM,
+            "Esri_NatGeoWorldMap": Esri_NatGeoWorldMap,
+            // Add other layers here
+        };
+        
+        // Set the default layer
+        osmLayer.addTo(map);
+        
+        // Handle layer selection from the sidebar menu
+        document.getElementById('layerMenu').addEventListener('click', function (e) {
+            if (e.target && e.target.nodeName == 'LI') {
+                var selectedLayer = e.target.dataset.layer;
+        
+                // Remove current layer
+                map.eachLayer(function (layer) {
+                    if (map.hasLayer(layer)) {
+                        map.removeLayer(layer);
+                    }
+                });
+        
+                // Add the selected layer
+                layers[selectedLayer].addTo(map);
+            }
+        });
+        
+        
+        </script>
+        <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script>
+        let ajax_url ;
+        var Methods = {
+            
+            HistogramStreaming:[
+                ['Histogram Equalization','{% url "he" %}'],
+                ['Minimum Maximum','{% url "mm" %}'],
+                ['Standard Deviation','{% url "sd" %}']
+            ],
+
+            ImageFilteration : [
+                ['Sobel Filter','{% url "cf" %}'],
+                ['High Pass Filter','{% url "hpf" %}'],
+                ['Low Pass Filter','{% url "lpf" %}'],
+                ['Remove Noise ( Median Filter )','{% url "rn" %}']
+            ],
+
+            ImageTransformation : [
+                ['PCA','{% url "pca" %}'],
+                ['NDVI','{% url "ndvi" %}'],
+                ['ICA','{% url "ica" %}'],
+                ['MNF','{% url "mnf" %}'],
+            ],
+            
+            ImageRes : [
+                ['ESRGAN 2x','{% url "esrgan" %}'],
+                ['EDSR 4x','{% url "edsr" %}'],
+            ],
+
+        }
+
+    </script>
+
+</body>
+</html>
