@@ -1,4 +1,4 @@
-Development of an Enterprise System for Satellite Image Processing Using Arithmetic Intelligence.
+Development of an Enterprise System for Satellite Image Processing Using Artificial Intelligence.
 
 Using Techniques Like: 
 
